@@ -61,23 +61,22 @@ body {
 }
 .app {
   height: 100%;
-  min-height: 600px;
-  max-width: 1100px;
+  min-height: 520px;
+  max-width: 700px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
-.top h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
-.top .sub { margin: 0; font-size: 12px; color: var(--muted); }
-.readout { font: 500 12px var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.top h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.readout { margin: 0; font: 500 12px var(--font-data); color: var(--muted); font-variant-numeric: tabular-nums; }
 .readout b { color: var(--accent); font-weight: 500; }
 
 .stage {
   position: relative;
   flex: 1;
-  min-height: 320px;
+  min-height: 300px;
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
@@ -90,75 +89,90 @@ body {
 .hint.gone { opacity: 0; }
 .fail { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 24px; text-align: center; color: #fff; }
 
-.bar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; }
-.glabel { width: 100%; margin: 0 0 -4px; font-size: 12px; color: var(--muted); }
-.group { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.ctl { display: flex; flex-direction: column; gap: 8px; }
+.seg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.acts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .btn {
-  font: inherit; font-weight: 500;
-  padding: 8px 14px; min-height: 38px;
-  border: 1px solid var(--line); border-radius: 6px;
+  font: inherit; font-size: 13px; font-weight: 500; line-height: 1.25; text-align: center;
+  padding: 8px 6px; min-height: 44px; min-width: 0;
+  border: 1px solid var(--line); border-radius: 8px;
   background: var(--panel); color: var(--fg); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .btn:hover { border-color: var(--accent); }
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.btn.auto {
+  position: absolute; top: 10px; right: 10px; min-height: 34px; padding: 4px 12px; font-size: 12px;
+  background: rgba(16,22,27,.5); border-color: rgba(255,255,255,.22); color: #fff;
+}
+.btn.auto[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.btn.act { font-weight: 600; }
 
-.dims { border: 0; margin: 0; padding: 0; min-width: 0; }
-.dims legend { padding: 0; margin-bottom: 4px; font-size: 12px; color: var(--muted); }
-.dims .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.dims { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.dims summary { padding: 10px 12px; font-size: 12px; color: var(--muted); cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+.dims summary::-webkit-details-marker { display: none; }
+.dims summary::after { content: "열기"; color: var(--accent); }
+.dims[open] summary::after { content: "닫기"; }
+.dims .row { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
+.dims .note { width: 100%; margin: 0; font-size: 12px; color: var(--muted); }
 .dim { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--muted); }
 .dim input {
-  width: 84px; padding: 7px 8px;
+  width: 88px; padding: 8px; min-height: 40px;
   font: 500 14px var(--font-data); font-variant-numeric: tabular-nums;
   border: 1px solid var(--line); border-radius: 6px;
-  background: var(--panel); color: var(--fg);
+  background: var(--bg); color: var(--fg);
 }
 .dim input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-@media (max-width: 560px) {
-  .app { min-height: 640px; }
-  .btn { padding: 8px 12px; }
+@media (min-width: 560px) {
+  .acts { grid-template-columns: repeat(4, 1fr); }
+  .top h1 { font-size: 18px; }
+}
+@media (max-width: 400px) {
+  body { padding-block: 8px; }
+  .app { gap: 8px; }
+  .btn { font-size: 12.5px; padding: 8px 3px; }
+  .hint { font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) { .hint { transition: none; } }
 </style>
 
 <main class="app">
   <header class="top">
-    <div>
-      <h1>AW 360° 뷰어</h1>
-      <p class="sub">창문형 공기청정기 · 사진 기준 모델 · 쌓기 / 필터 분해</p>
-    </div>
+    <h1>AW 360° 뷰어</h1>
     <p class="readout">방위 <b id="az">38°</b></p>
   </header>
 
   <section class="stage" id="stage">
     <canvas id="gl" tabindex="0" aria-label="AW 3D 모델. 드래그하면 회전하고, 휠이나 두 손가락으로 확대합니다."></canvas>
     <div class="hint" id="hint">드래그 회전 · 휠/핀치 확대 · 부품을 클릭하면 빠져요</div>
+    <button class="btn auto" type="button" id="auto" aria-pressed="true">자동 회전</button>
   </section>
 
-  <section class="bar">
-    <div class="group" role="group" aria-label="시점 바꾸기">
+  <section class="ctl">
+    <div class="seg" role="group" aria-label="시점 바꾸기">
       <button class="btn" type="button" data-th="0" data-ph="86">정면</button>
       <button class="btn" type="button" data-th="38" data-ph="80">45°</button>
       <button class="btn" type="button" data-th="90" data-ph="86">측면</button>
       <button class="btn" type="button" data-th="180" data-ph="86">후면</button>
       <button class="btn" type="button" data-th="30" data-ph="32">위</button>
-      <button class="btn" type="button" id="auto" aria-pressed="true">자동 회전</button>
     </div>
-    <div class="group" role="group" aria-label="쌓기와 분해">
-      <button class="btn" type="button" id="stack" aria-pressed="false">위로 쌓기 (옆에서 밀어 넣기)</button>
-      <button class="btn" type="button" id="open" aria-pressed="false">앞 커버·필터 빼기</button>
-      <button class="btn" type="button" id="tray" aria-pressed="false">뒷판 트레이 빼기</button>
-      <button class="btn" type="button" id="reset">처음 상태</button>
+    <div class="acts" role="group" aria-label="쌓기와 분해">
+      <button class="btn act" type="button" id="stack" aria-pressed="false">위로 쌓기</button>
+      <button class="btn act" type="button" id="open" aria-pressed="false">커버·필터 분해</button>
+      <button class="btn act" type="button" id="tray" aria-pressed="false">뒷판 트레이</button>
+      <button class="btn act" type="button" id="reset">처음으로</button>
     </div>
-    <fieldset class="dims">
-      <legend>크기(mm) · 추정값, 실측을 넣으면 바로 바뀜</legend>
+    <details class="dims">
+      <summary>크기 조정 (mm)</summary>
       <div class="row">
+        <p class="note">추정값이에요. 실측을 넣으면 바로 바뀝니다.</p>
         <label class="dim" for="dimW">가로<input id="dimW" type="number" inputmode="numeric" min="150" max="1500" step="1" value="420"></label>
         <label class="dim" for="dimH">세로<input id="dimH" type="number" inputmode="numeric" min="150" max="1500" step="1" value="470"></label>
         <label class="dim" for="dimD">깊이<input id="dimD" type="number" inputmode="numeric" min="60" max="1000" step="1" value="210"></label>
       </div>
-    </fieldset>
+    </details>
   </section>
 </main>
 
